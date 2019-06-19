@@ -1,0 +1,16 @@
+
+
+    <resources>
+        <string name="app_name">HomeWork521</string>
+        <string name="text_username">Введите логин</string>
+        <string name="field_usrename" />
+        <string name="text_email">Введите пароль</string>
+        <string name="field_email" />
+        <string name="ok_button">LOGIN</string>
+        <string name="clear_button">REGISTRATION</string>
+        <string name="hintName">Логин</string>
+        <string name="emailHint">Пароль</string>
+        <string name="messageError">Вы не вошли в систему\nВведен неправильный логин или пароль\nИли вы не ввели логин или пароль</string>
+
+    </resources>
+
