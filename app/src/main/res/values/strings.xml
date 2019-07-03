@@ -10,7 +10,11 @@
         <string name="clear_button">REGISTRATION</string>
         <string name="hintName">Логин</string>
         <string name="emailHint">Пароль</string>
-        <string name="messageError">Вы не вошли в систему\nВведен неправильный логин или пароль\nИли вы не ввели логин или пароль</string>
+        <string name="messageErrorLogin">Вы не вошли в систему\nВведен неправильный логин или пароль\nИли вы не ввели логин или пароль</string>
+        <string name="messageErrorToastLogin">Вы не вошли в систему!</string>
+        <string name="messageErrorToastRegistr">Вы не зарегистрировались!</string>
+        <string name="messageErrorRegistr">Вы не зарегистрированы\nНе ввели логин или пароль\nПопробуйте еще раз.</string>
+
 
     </resources>
 
