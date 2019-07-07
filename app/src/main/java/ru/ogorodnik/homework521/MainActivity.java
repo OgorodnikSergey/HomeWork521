@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,25 +30,28 @@ public class MainActivity extends AppCompatActivity {
         final Button loginBtn = (Button) findViewById(R.id.loginBtn);
         final Button registrationBtn = (Button) findViewById(R.id.registrationBtn);
 
-        // Нажимаем на кнопку ЛОГИН - загрузаем данный логина и пароля из файла и сравниваем с введенными
+        // Нажимаем на кнопку ЛОГИН - загружаем данные логина и пароля из файла и сравниваем с введенными
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (!login.getText().toString().equals("") || !password.getText().toString().equals("")) {
+                if (isLoginAndPasswordValid()) {
                     //------------------------------------Загружаем логин
                     String strLog = readLogin();
                     //------------------------------------Загружаем пароль
                     String strPassword = readPassword();
 
                     if (password.getText().toString().equals (strPassword) & login.getText().toString().equals(strLog)){
-                        exampleText.setText("Поздравляю вы ввели правильный Логин и Пароль");
-                        Toast.makeText(MainActivity.this, "Вы вошли в систему", Toast.LENGTH_LONG).show();
+                        exampleText.setText(getText(R.string.messageOkLogin));
+                        Toast.makeText(MainActivity.this, getText(R.string.messageOkToastLogin), Toast.LENGTH_LONG).show();
                     } else {
 
                         exampleText.setText (getText(R.string.messageErrorLogin));
                         Toast.makeText(MainActivity.this, getText(R.string.messageErrorToastLogin), Toast.LENGTH_LONG).show();
                     }
+                } else {
+                    exampleText.setText (getText(R.string.messageErrorLoginEmpty));
+                    Toast.makeText(MainActivity.this, getText(R.string.messageErrorToastLoginEmpty), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -58,19 +60,21 @@ public class MainActivity extends AppCompatActivity {
         registrationBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!login.getText().toString().equals("") && !password.getText().toString().equals("")) {
+                if (isLoginAndPasswordValid()) {
 
                     // --------------------------------- сохраняем логин
-                    String text = login.getText().toString();
-                    saveData(FILE_LOGIN, text);
+                    final String loginText = login.getText().toString();
+                    //String text = login.getText().toString();
+                    saveData(FILE_LOGIN, loginText);
                     login.getText().clear();
                     // --------------------------------- сохраняем пароль
-                    text = password.getText().toString();
-                    saveData(FILE_PASSWORD, text);
+                    final String passwordText = password.getText().toString();
+                    //text = password.getText().toString();
+                    saveData(FILE_PASSWORD, passwordText);
                     password.getText().clear();
                     //-----------------------------------
-                    exampleText.setText("Вы зарегистрированы");
-                    Toast.makeText(MainActivity.this, "Файлы сохранены " + getFilesDir(), Toast.LENGTH_LONG).show();
+                    exampleText.setText(getText(R.string.messageOkRegistration));
+                    Toast.makeText(MainActivity.this, getText(R.string.messageOkRegistration), Toast.LENGTH_LONG).show();
                 } else {
                     exampleText.setText (getText(R.string.messageErrorRegistr));
                     Toast.makeText(MainActivity.this, getText(R.string.messageErrorToastRegistr), Toast.LENGTH_LONG).show();
@@ -88,50 +92,45 @@ public class MainActivity extends AppCompatActivity {
         return readLineFromFile(FILE_PASSWORD);
     }
 //------------------------READ FILE---------------------------
-    private String readLineFromFile(String fileName) {
-        BufferedReader br = null;
+private String readLineFromFile(String fileName) {
+    BufferedReader br = null;
+    try {
+        br = new BufferedReader(new InputStreamReader(openFileInput(fileName)));
+        return br.readLine();
+    } catch (IOException e) {
+        e.printStackTrace();
+        return null;
+    } finally {
         try {
-            br = new BufferedReader(new InputStreamReader(
-                    openFileInput(fileName)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        String Stroka = "";
-        // читаем содержимое
-        while (true) {
-            try {
-                if (((Stroka = br.readLine()) != null)) {
-                    break;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (br != null) {
+                br.close();
             }
-        }
-        try {
-            br.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return Stroka;
     }
+}
 //------------------------------------------------------------
     private void saveData (String fileName, String text){
         FileOutputStream fos = null;
         try {
             fos = openFileOutput(fileName, MODE_PRIVATE);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
             fos.write(text.getBytes());
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        try {
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-
+    private boolean isLoginAndPasswordValid() {
+        final EditText login = (EditText) findViewById(R.id.login);
+        final EditText password = (EditText) findViewById(R.id.password);
+        return !login.getText().toString().equals("") && !password.getText().toString().equals("");
+    }
 }
